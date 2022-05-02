@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+    <title>Hearthstone API</title>
+</head>
+<body>
+    <script src="https://unpkg.com/vue@3"></script>
+
+
+
+<div id="app">
+    <h1>
+        <img src="/img/title.png" alt="title">
+    </h1>
+    <input class="search" type="text" v-model="q">
+    <div class="main">
+        <ul  >
+            <li :v-if="card.img===true" v-for="card in getFiltered">
+                <img  :src="card.img" :alt="card.name"> 
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+  Vue.createApp({
+    data() {
+      return {
+          message: 'Hello Vue!',
+          cards:[],
+          q:'',
+          cardWithImg:[]
+      }
+    },
+    methods: {
+    },
+    computed: {
+        
+        getFiltered(){
+            return this.cards.filter(card=>{
+                return card.name.toLowerCase().includes(this.q.toLowerCase());
+            })
+            
+        },
+        
+    },
+    mounted(){
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Host': 'omgvamp-hearthstone-v1.p.rapidapi.com',
+                'X-RapidAPI-Key': '7f07b3c0b0msh1cd656c05934728p1ff653jsn86f30d61ae41'
+            }
+        };
+        let cards=[]
+        fetch('https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/classes/Warrior', options)
+        .then(response => response.json())
+        .then(response => {
+            this.cards = response.filter(res=> res.hasOwnProperty('img'));
+        })
+        .catch(err => console.error(err));
+        
+   }, 
+   
+  }).mount('#app')
+
+</script>
+</body>
+</html>
